@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * 集合工具类
  */
-public final class CollectionUtil {
+public final class MyCollectionUtil {
 
     /**
      * 判断Collection 是否为空

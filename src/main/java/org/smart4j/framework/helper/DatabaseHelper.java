@@ -1,4 +1,4 @@
-package org.smart4j.framework.util;
+package org.smart4j.framework.helper;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
@@ -7,6 +7,8 @@ import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.smart4j.framework.util.MyCollectionUtil;
+import org.smart4j.framework.util.PropsUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -214,7 +216,7 @@ public class DatabaseHelper {
      * @return
      */
     public static <T> boolean insertEntity(Class<T> entityClass, Map<String, Object> filedMap) {
-        if (CollectionUtil.isEmpty(filedMap)) {
+        if (MyCollectionUtil.isEmpty(filedMap)) {
             LOGGER.error("can not insert entity: filedMap is empty");
             return false;
         }
@@ -244,8 +246,7 @@ public class DatabaseHelper {
      * @return
      */
     public static <T> boolean updateEntity(Class<T> entityClass, int id, Map<String, Object> filedMap) {
-        // TODO : 注意参数的间隙
-        if (CollectionUtil.isEmpty(filedMap)) {
+        if (MyCollectionUtil.isEmpty(filedMap)) {
             LOGGER.error("can not insert entity: filedMap is empty");
             return false;
         }

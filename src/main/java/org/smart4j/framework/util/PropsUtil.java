@@ -33,7 +33,8 @@ public final class PropsUtil {
             properties = new Properties();
             properties.load(inputStream);
         }catch (IOException io){
-
+            LOGGER.error("loadProps error",io);
+            throw new RuntimeException(io);
         }finally {
             if(inputStream != null){
                 try{
