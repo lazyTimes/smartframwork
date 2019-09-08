@@ -6,10 +6,13 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * 类加载工具类
@@ -72,6 +75,27 @@ public final class MyClassUtil {
                         // 替换掉特殊符号
                         String urlPath = url.getPath().replaceAll("%20", "");
                         addClass(result, urlPath, packageName);
+                    }else if(protocool.equals("jar")){
+                        // 如果是jar包，获取jar包路径
+                        JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
+                        if(null != jarURLConnection){
+                            // 获取jar包文件
+                            JarFile jarFile = jarURLConnection.getJarFile();
+                            if(null != jarFile){
+                                Enumeration<JarEntry> entries = jarFile.entries();
+                                // 枚举迭代获取所有的jar包类
+                                while (entries.hasMoreElements()){
+                                    JarEntry jarEntry = entries.nextElement();
+                                    // 获取名称
+                                    String entryName = jarEntry.getName();
+                                    if(entryName.equals(".class")){
+                                        String className = entryName.substring(0, entryName.lastIndexOf("."))
+                                                .replaceAll("/", ".");
+                                        doAddClass(result, className);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -85,9 +109,9 @@ public final class MyClassUtil {
     /**
      * 将对应类型的文件路径加入到对应的set内部
      *
-     * @param result
-     * @param urlPath
-     * @param packageName
+     * @param result 所有的应用宝
+     * @param urlPath 文件路径
+     * @param packageName 包名
      */
     private static void addClass(Set<Class<?>> result, String urlPath, final String packageName) {
         //对于文件路径进行过滤操作
