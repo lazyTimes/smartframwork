@@ -45,7 +45,7 @@ public final class RelfectionUtil {
         // 一定要加上，强制访问
         try {
             method.setAccessible(true);
-            method.invoke(object, params);
+            result = method.invoke(object, params);
         } catch (Exception e){
             LOGGER.error("Method invoke error", e);
             throw new RuntimeException(e);

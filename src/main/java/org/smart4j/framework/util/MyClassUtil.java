@@ -75,20 +75,20 @@ public final class MyClassUtil {
                         // 替换掉特殊符号
                         String urlPath = url.getPath().replaceAll("%20", "");
                         addClass(result, urlPath, packageName);
-                    }else if(protocool.equals("jar")){
+                    } else if (protocool.equals("jar")) {
                         // 如果是jar包，获取jar包路径
                         JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
-                        if(null != jarURLConnection){
+                        if (null != jarURLConnection) {
                             // 获取jar包文件
                             JarFile jarFile = jarURLConnection.getJarFile();
-                            if(null != jarFile){
+                            if (null != jarFile) {
                                 Enumeration<JarEntry> entries = jarFile.entries();
                                 // 枚举迭代获取所有的jar包类
-                                while (entries.hasMoreElements()){
+                                while (entries.hasMoreElements()) {
                                     JarEntry jarEntry = entries.nextElement();
                                     // 获取名称
                                     String entryName = jarEntry.getName();
-                                    if(entryName.equals(".class")){
+                                    if (entryName.equals(".class")) {
                                         String className = entryName.substring(0, entryName.lastIndexOf("."))
                                                 .replaceAll("/", ".");
                                         doAddClass(result, className);
@@ -109,39 +109,41 @@ public final class MyClassUtil {
     /**
      * 将对应类型的文件路径加入到对应的set内部
      *
-     * @param result 所有的应用宝
-     * @param urlPath 文件路径
+     * @param classSet      所有的应用宝
+     * @param packagePath 文件路径
      * @param packageName 包名
      */
-    private static void addClass(Set<Class<?>> result, String urlPath, final String packageName) {
+    private static void addClass(Set<Class<?>> classSet, String packagePath, String packageName) {
         //对于文件路径进行过滤操作
-        File[] files = new File(urlPath).listFiles(new FileFilter() {
-            public boolean accept(File pathname) {
+        File[] files = new File(packagePath).listFiles(new FileFilter() {
+            public boolean accept(File file) {
                 // 如果是class 文件或者文件夹，允许
-                return (pathname.isFile() && packageName.endsWith(".class")) || pathname.isDirectory();
+                return (file.isFile() && file.getName().endsWith(".class")) || file.isDirectory();
             }
         });
         for (File file : files) {
-            String fileName = file.getName(); // 文件名
+            // 当前遍历目录的文件名
+            String fileName = file.getName();
+            // 如果是文件类型
             if (file.isFile()) {
                 String className = fileName.substring(0, fileName.lastIndexOf("."));
-                if(MyStringUtil.isNotEmpty(className)){
+                if (MyStringUtil.isNotEmpty(className)) {
                     className = packageName + "." + className;
                 }
-                doAddClass(result, className);
+                doAddClass(classSet, className);
 
-            }else{
+            } else {
                 // 如果不是文件，则根据路径加载文件
-                String subPackPath = fileName;
-                if(MyStringUtil.isNotEmpty(subPackPath)){
-                    subPackPath = urlPath + "/" + subPackPath;
+                String subPackagePath = fileName;
+                if (MyStringUtil.isNotEmpty(packagePath)) {
+                    subPackagePath = packagePath + "/" + subPackagePath;
                 }
-                String subPackName = fileName;
-                if(MyStringUtil.isNotEmpty(subPackPath)){
-                    subPackName = urlPath + "." + subPackName;
+                String subPackageName = fileName;
+                if (MyStringUtil.isNotEmpty(packageName)) {
+                    subPackageName = packageName + "." + subPackageName;
                 }
                 // 递归获取子包下面的文件
-                addClass(result, subPackPath, subPackName);
+                addClass(classSet, subPackagePath, subPackageName);
             }
         }
     }
@@ -149,7 +151,8 @@ public final class MyClassUtil {
     /**
      * 添加类名的统一方法
      * 主要为根据包名加载类
-     * @param result 类集合
+     *
+     * @param result    类集合
      * @param className 类名
      */
     private static void doAddClass(Set<Class<?>> result, String className) {
