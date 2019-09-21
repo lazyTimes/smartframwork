@@ -84,7 +84,6 @@ public class DispatcherServlet extends HttpServlet {
 
             }
             // 编解码处理流数据
-            // TODO: 此部分的代码不清楚作用，需要实际启动项目测试
             String body = CodecUtil.decodeURL(StreamUtil.getString(req.getInputStream()));
             if (MyStringUtil.isNotEmpty(body)) {
                 String[] params = MyStringUtil.spliteString(body, "&");
