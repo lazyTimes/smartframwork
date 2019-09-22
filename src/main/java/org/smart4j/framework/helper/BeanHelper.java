@@ -18,7 +18,7 @@ public final class BeanHelper {
      * 定义bean映射
      * （存放bean类与bean 实例的映射关系）
      */
-    private static final Map<Class<?>, Object> BEAN_MAP = new HashMap<Class<?>, Object>();
+    private static Map<Class<?>, Object> BEAN_MAP = new HashMap<Class<?>, Object>();
 
     /**
      * 初始化
@@ -57,5 +57,7 @@ public final class BeanHelper {
     }
 
 
-
+    public static void setBeanMap(Class<?> cls, Object object) {
+        BEAN_MAP.put(cls, object);
+    }
 }
