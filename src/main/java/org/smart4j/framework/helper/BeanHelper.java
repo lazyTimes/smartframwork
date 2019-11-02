@@ -60,4 +60,6 @@ public final class BeanHelper {
     public static void setBeanMap(Class<?> cls, Object object) {
         BEAN_MAP.put(cls, object);
     }
+
+
 }
