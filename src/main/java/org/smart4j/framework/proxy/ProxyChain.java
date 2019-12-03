@@ -18,6 +18,10 @@ public class ProxyChain {
      */
     private final Class<?> targetClass;
     /**
+     * 目标实体对象
+     */
+    private final Object targerObject;
+    /**
      * 目标class 方法
      */
     private final Method targetMethod;
@@ -29,10 +33,7 @@ public class ProxyChain {
      * 方法参数
      */
     private final Object[] methodParams;
-    /**
-     * 目标实体对象
-     */
-    private final Object targerObject;
+
 
     /**
      * 代理列表
@@ -43,14 +44,21 @@ public class ProxyChain {
      */
     private int proxyIndex = 0;
 
-    public ProxyChain(Class<?> targetClass, Method targetMethod,
-                      MethodProxy methodProxy, Object[] methodParams,
-                      Object targerObject, List<Proxy> proxList) {
+    /**
+     *
+     * @param targetClass
+     * @param targerObject
+     * @param targetMethod
+     * @param methodProxy
+     * @param methodParams
+     * @param proxList
+     */
+    public ProxyChain(Class<?> targetClass, Object targerObject, Method targetMethod, MethodProxy methodProxy, Object[] methodParams, List<Proxy> proxList) {
         this.targetClass = targetClass;
+        this.targerObject = targerObject;
         this.targetMethod = targetMethod;
         this.methodProxy = methodProxy;
         this.methodParams = methodParams;
-        this.targerObject = targerObject;
         this.proxList = proxList;
     }
 
