@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * @program: smartframwork
@@ -24,6 +25,15 @@ public final class ControllerHelper {
      */
     private static final Map<Request, Handler> ACTION_MAP =
             new HashMap<Request, Handler>();
+
+    /**
+     * 匹配请求路径的第一种
+     */
+//    private static final Pattern COMPILE_URL_ONE = Pattern.compile("\\w+:/\\w*");
+    /**
+     * 匹配请求路径的第二种
+     */
+    private static final Pattern COMPILE_URL_TWO = Pattern.compile("\\w+:\\w*");
 
     static {
         // 获取所有Controller
@@ -40,25 +50,48 @@ public final class ControllerHelper {
                             // 从action 当中获取Url映射规则
                             Action action = method.getAnnotation(Action.class);
                             String mapping = action.value();
-                            // 验证映射规则
-                            if(mapping.matches("\\w+:/\\w*")){
+                            if(isMatchCompileUrlOne(mapping)){
                                 String[] split = mapping.split(":");
                                 if(MyArrayUtil.isNotEmpty(split) && split.length == 2){
                                     // 获取请求方法和路径
                                     String requestMethod = split[0];
                                     String requestPath = split[1];
+                                    // 如果没有 / 则进行添加
+                                    if(!requestPath.startsWith("/")){
+                                        requestPath = "/" + requestPath;
+                                    }
                                     Request request = new Request(requestMethod, requestPath);
                                     Handler handler = new Handler(controllerClass, method);
                                     // 初始化Action Map
                                     ACTION_MAP.put(request, handler);
                                 }
                             }
+                            // 验证映射规则
+//                            if(mapping.matches("\\w+:/\\w*")){
+//                                String[] split = mapping.split(":");
+//                                if(MyArrayUtil.isNotEmpty(split) && split.length == 2){
+//                                    // 获取请求方法和路径
+//                                    String requestMethod = split[0];
+//                                    String requestPath = split[1];
+//                                    Request request = new Request(requestMethod, requestPath);
+//                                    Handler handler = new Handler(controllerClass, method);
+//                                    // 初始化Action Map
+//                                    ACTION_MAP.put(request, handler);
+//                                }
+//                            }
                         }
                     }
                 }
             }
         }
 
+    }
+
+    /**
+     * 匹配请求路径的第一种或者第二种
+     */
+    private static boolean isMatchCompileUrlOne(String regex){
+        return COMPILE_URL_TWO.matcher(regex).matches();
     }
 
 
